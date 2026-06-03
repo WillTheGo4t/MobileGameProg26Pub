@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BulletSpawner : MonoBehaviour
 {
-    [SerializeField] GameObject _bullet;
+    [SerializeField] ObjectPool _objectPool;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -11,7 +11,7 @@ public class BulletSpawner : MonoBehaviour
 
     void SpawnBullets()
     {
-        GameObject newBullet = Instantiate (_bullet, this.transform.position, this.transform.rotation) as GameObject;
+        GameObject newBullet = _objectPool.GetPooledObject();
         newBullet.GetComponent<Rigidbody>().AddForce(Vector3.forward * 100f);
     }
 
