@@ -86,6 +86,8 @@ public class CreatureViewer : MonoBehaviour
     void OnSecondaryTouchEnd(InputAction.CallbackContext context)
     {
         _isZooming = false;
+
+        _oldXPosition = _playerInput.Touch.PrimaryTouchPosition.ReadValue<Vector2>().x;
     }
 
     void HandleZoom()
@@ -101,13 +103,11 @@ public class CreatureViewer : MonoBehaviour
         float delta = distance - _oldDistance;
 
         // neue Camera-Size berechnen - statt plus um die zoomrichtung zu ändern
-        float newSize = _camera.orthographicSize - delta * _zoomSpeed*Time.deltaTime;
+        float newSize = _camera.orthographicSize - delta * _zoomSpeed * Time.deltaTime;
         //camera Size clampen um nicht zu klein/zu groß zu werden 
         newSize = Mathf.Clamp(newSize, _minMaxZoom.x, _minMaxZoom.y);
 
         _camera.orthographicSize = newSize;
-
-        Debug.Log(_camera.orthographicSize);
 
         // aktuelle Distanz fürs nächste Frame speichern
         _oldDistance = distance;
@@ -143,7 +143,7 @@ public class CreatureViewer : MonoBehaviour
         float delta = currentXPostion - _oldXPosition;
 
         //Creature um die Y-Achse rotieren mit Speed * delta. *-1 weil wir die Rotation invertiert wollen -> Finger zieht nach links, Creature rotiert links herum
-        _activeCreature.transform.Rotate(Vector3.up, delta * _creatureRotationSpeed * -1 *Time.deltaTime);
+        _activeCreature.transform.Rotate(Vector3.up, delta * _creatureRotationSpeed * -1 * Time.deltaTime);
 
         //speichern der aktuellen xPosition für das nächste Frame
         _oldXPosition = currentXPostion;
