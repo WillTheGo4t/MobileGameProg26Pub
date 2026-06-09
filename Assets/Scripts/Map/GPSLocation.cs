@@ -225,6 +225,11 @@ public class GPSLocation : MonoBehaviour
         _playerPosition.altitude = Input.location.lastData.altitude;
     }
 
+    public Vector2 GetPlayerCoordinates()
+    {
+        return new Vector2(_playerPosition.latitude, _playerPosition.longitude); 
+    }
+
     void UpdateHeading()
     {
         float heading;

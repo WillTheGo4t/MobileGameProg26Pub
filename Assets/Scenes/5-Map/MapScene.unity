@@ -459,6 +459,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1305e05d46db92498ce698a4c366a5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: CesiumForUnity::CesiumForUnity.CesiumGeoreference
+--- !u!4 &598904206 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4733610084182273405, guid: 9422cd9e30d38314d91bce9e843851ee, type: 3}
+  m_PrefabInstance: {fileID: 8089237741788769960}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &608430260
 GameObject:
   m_ObjectHideFlags: 0
@@ -1286,6 +1291,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1645241760}
+  - component: {fileID: 1645241761}
   m_Layer: 0
   m_Name: Spawner
   m_TagString: Untagged
@@ -1308,6 +1314,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1645241761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645241759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 564e1cd395693394791d7a8c16541306, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
+  _gpsLocation: {fileID: 260397224}
+  _creaturePrefab: {fileID: 8666068513098319093, guid: c95f4daa850074d4e8fb1a7585c678dc, type: 3}
+  _radius: 20
+  _parentTransform: {fileID: 598904206}
+  _numberOfSpawns: 5
 --- !u!114 &1649725944 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 30752978033210827, guid: c62af70124dca6b42b355a5a763754c5, type: 3}
