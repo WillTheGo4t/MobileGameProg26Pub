@@ -58,11 +58,11 @@ public class GPSLocation : MonoBehaviour
     {
         _playerPosition = new PlayerPosition();
         _mockPosition = new PlayerPosition();
+        SetMockPosition1();
 
-
-        _mockPosition.latitude = 49.4135f;
-        _mockPosition.longitude = 8.615133f;
-        _mockPosition.altitude = 200f;
+        // _mockPosition.latitude = 49.4135f;
+        // _mockPosition.longitude = 8.615133f;
+        // _mockPosition.altitude = 200f;
 
         if (_useMockService)
             InvokeRepeating("UpdatePlayerPosition", 1f, 1f);
@@ -81,9 +81,10 @@ public class GPSLocation : MonoBehaviour
         _currentTrackingMode = TrackingMode.Walking;
         _trackingModeTextField.text = "Trackmode " + _currentTrackingMode.ToString();
 
-        if (!Permission.HasUserAuthorizedPermission(Permission.CoarseLocation))
+        if (!Permission.HasUserAuthorizedPermission(Permission.FineLocation))
         {
             Permission.RequestUserPermission(Permission.FineLocation);
+            Debug.Log("Ask for permission");
             yield return new WaitForSeconds(2f);
         }
 
@@ -194,6 +195,7 @@ public class GPSLocation : MonoBehaviour
             GetPlayerPositionFromMock();
         else
             GetPlayerPositionFromGPS();
+
         _coordinatesTextField.text = "lat: " + _playerPosition.latitude + "\nlong: " + _playerPosition.longitude + "\nalt :" + _playerPosition.altitude;
 
         _cesiumGeoReference.SetOriginLongitudeLatitudeHeight(_playerPosition.longitude,
@@ -223,6 +225,8 @@ public class GPSLocation : MonoBehaviour
         _playerPosition.latitude = Input.location.lastData.latitude;
         _playerPosition.longitude = Input.location.lastData.longitude;
         _playerPosition.altitude = Input.location.lastData.altitude;
+
+        Debug.Log("Pos " + Input.location.lastData.latitude + " at " + Input.location.lastData.timestamp);
     }
 
     public Vector2 GetPlayerCoordinates()
