@@ -27,6 +27,7 @@ public class GPSLocation : MonoBehaviour
     [SerializeField] Image _walkEastButtonImage;
 
     [SerializeField] bool _useMockService;
+    [SerializeField] CesioumGeoreference _cesioumGeoReference;
 
     bool _walkNorth;
     bool _walkEast;
@@ -172,6 +173,8 @@ public class GPSLocation : MonoBehaviour
         else
             GetPlayerPositionFromGPS();
         _coordinatesTextField.text = "lat: " + _playerPosition.latitude + "\nlong: " + _playerPosition.longitude + "\nalt :" + _playerPosition.altitude;
+
+    _cesioumGeoReference.SetOriginLongitude
     }
 
     void GetPlayerPositionFromMock()
