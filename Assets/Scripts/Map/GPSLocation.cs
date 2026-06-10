@@ -58,6 +58,8 @@ public class GPSLocation : MonoBehaviour
     {
         _playerPosition = new PlayerPosition();
         _mockPosition = new PlayerPosition();
+        Input.compass.enabled = true;
+        
         SetMockPosition1();
 
         // _mockPosition.latitude = 49.4135f;
