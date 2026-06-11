@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9c526fb2ff486d46a38b97df042d473, type: 3}
+  m_Name: BeeCreatureSO
+  m_EditorClassIdentifier: Assembly-CSharp::ScriptableCreature
+  ID: 1
+  Name: Bee
+  Type: Air
+  Model: {fileID: 919132149155446097, guid: d32bf4b5b59a81146b363a021802bcd0, type: 3}
+  Icon: {fileID: 21300000, guid: 29c8ed3430007fa42802d65f4cb89c48, type: 3}
+  BaseHP: 10
+  BaseAttack: 2

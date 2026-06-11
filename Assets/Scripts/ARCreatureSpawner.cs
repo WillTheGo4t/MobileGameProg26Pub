@@ -49,11 +49,26 @@ public class ARCreatureSpawner : MonoBehaviour
 
     void CreateARCreature(ARPlane bestPlane)
     {
+        // Null Checks
+        if (GameplayManager.Instance == null)
+        {
+            Debug.LogError("GameplayManager Instance not set");
+            return;
+        }
+
+        if (GameplayManager.Instance.SelectedCreature == null)
+        {
+            Debug.LogError("SelectedCreature not set");
+            return;
+        }
+
         GameObject spawnedCreature = Instantiate(_creaturePrefab, bestPlane.center, Quaternion.identity);
+        spawnedCreature.GetComponent<ARCreature>().SetCreatureType(GameplayManager.Instance.SelectedCreature);
+
         spawnedCreature.transform.LookAt(Camera.main.transform);
         spawnedCreature.transform.rotation = Quaternion.Euler(0, spawnedCreature.transform.rotation.eulerAngles.y, 0);
         spawnedCreature.AddComponent<ARAnchor>();
-        
+
         DisablePlaneVisuals();
     }
 

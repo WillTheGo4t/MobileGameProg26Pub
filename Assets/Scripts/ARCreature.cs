@@ -1,5 +1,7 @@
+using System;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ARCreature : MonoBehaviour
 {
@@ -7,6 +9,11 @@ public class ARCreature : MonoBehaviour
     Transform targetBait;
     [SerializeField] float stopDistance = 0.1f;
     [SerializeField] float speed = 10f;
+
+    [SerializeField] Transform _visualRoot;
+    
+    ScriptableCreature _scriptableCreature;
+
 
     void OnDisable()
     {
@@ -19,6 +26,14 @@ public class ARCreature : MonoBehaviour
         // Auf das statische Event vom BaitSpawner subscriben
         ARBaitSpawner.OnBaitPlaced += HandleNewBait;
     }
+
+
+    public void SetCreatureType(ScriptableCreature scriptableCreature)
+    {
+        _scriptableCreature = scriptableCreature;
+        GameObject creatureVisuals = Instantiate(scriptableCreature.Model, _visualRoot);        
+    }
+
 
     private void HandleNewBait(Transform baitTransform)
     {
@@ -46,8 +61,27 @@ public class ARCreature : MonoBehaviour
         if (Vector3.Distance(transform.position, targetPosition) <= stopDistance)
         {
             //CatchLogic();
-            Debug.Log("Caught!");
+           CatchCreature();
         }
+    }
+
+    void CatchCreature()
+    {
+        isMoving = false;
+
+        CreatureData caughtCreature = new CreatureData();
+        caughtCreature.ScriptableID = _scriptableCreature.ID;
+        caughtCreature.CaughtDateTime = DateTime.Now;
+        caughtCreature.Level = 1;
+
+        GameplayManager.Instance.AddCaughtCreature(caughtCreature);
+
+        Invoke("LoadMapScene",1f);
+    }
+
+    void LoadMapScene()
+    {
+        SceneManager.LoadScene("MapScene");
     }
 
 

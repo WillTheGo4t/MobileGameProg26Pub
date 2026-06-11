@@ -169,7 +169,7 @@ MonoBehaviour:
   _trackingModeTextField: {fileID: 458003001}
   _walkNorthButtonImage: {fileID: 677050281}
   _walkEastButtonImage: {fileID: 1656766317}
-  _useMockService: 0
+  _useMockService: 1
   _cameraHeightAdjuster: {fileID: 2123734790}
   _playerHeightAdjuster: {fileID: 1649725944}
   _mockHeading: 0
@@ -1458,6 +1458,10 @@ MonoBehaviour:
   _radius: 25
   _parentTransform: {fileID: 598904206}
   _numberOfSpawns: 5
+  _possibleSpawnableCreatures:
+  - {fileID: 11400000, guid: e4d586745b4e5a44b81916ee3c1fe327, type: 2}
+  - {fileID: 11400000, guid: a5eb78174571b7040ae9e0a69c56107d, type: 2}
+  - {fileID: 11400000, guid: 4559ec7995d79d445876fc461f518118, type: 2}
 --- !u!114 &1649725944 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 30752978033210827, guid: c62af70124dca6b42b355a5a763754c5, type: 3}
@@ -2978,6 +2982,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c62af70124dca6b42b355a5a763754c5, type: 3}
+--- !u!1001 &3807375592916749929
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3246433612694248741, guid: b3f37184dbf2d1d45abab14755ba3003, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3246433612694248741, guid: b3f37184dbf2d1d45abab14755ba3003, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3246433612694248741, guid: b3f37184dbf2d1d45abab14755ba3003, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3246433612694248741, guid: b3f37184dbf2d1d45abab14755ba3003, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3246433612694248741, guid: b3f37184dbf2d1d45abab14755ba3003, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3246433612694248741, guid: b3f37184dbf2d1d45abab14755ba3003, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3246433612694248741, guid: b3f37184dbf2d1d45abab14755ba3003, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3246433612694248741, guid: b3f37184dbf2d1d45abab14755ba3003, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3246433612694248741, guid: b3f37184dbf2d1d45abab14755ba3003, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3246433612694248741, guid: b3f37184dbf2d1d45abab14755ba3003, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4179114956299731349, guid: b3f37184dbf2d1d45abab14755ba3003, type: 3}
+      propertyPath: m_Name
+      value: CreatureDatabase
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b3f37184dbf2d1d45abab14755ba3003, type: 3}
 --- !u!1001 &8089237741788769960
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3047,3 +3108,4 @@ SceneRoots:
   - {fileID: 8089237741788769960}
   - {fileID: 1645241760}
   - {fileID: 542431587}
+  - {fileID: 3807375592916749929}

@@ -1,6 +1,7 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class NewMonoBehaviourScript : MonoBehaviour
+public class CreatureSpawner : MonoBehaviour
 {
 
     float _metersPerDegreeLong;
@@ -12,6 +13,8 @@ public class NewMonoBehaviourScript : MonoBehaviour
     // GameObject that is Child of CesiumGeoReference so we spawn the Creatures correctly.
     [SerializeField] Transform _parentTransform;
     [SerializeField] float _numberOfSpawns = 5;
+
+    [SerializeField] List<ScriptableCreature> _possibleSpawnableCreatures;
 
 
 
@@ -25,10 +28,12 @@ public class NewMonoBehaviourScript : MonoBehaviour
     {
         for (int i = 0; i < _numberOfSpawns; i++)
         {
-            MapCreature newCreature = Instantiate(_creaturePrefab, _parentTransform).GetComponent<MapCreature>();
             // MapCreature SpawnCreature aufrufen mit Position an der gespawnt werden soll und 
             // einem zufälligen CreatureType das gespawnt werden soll
-            newCreature.GetComponent<MapCreature>().SpawnCreature(GetRandomPointAroundPlayer());
+
+            int random = Random.Range(0, _possibleSpawnableCreatures.Count);
+            GameObject newCreature = Instantiate(_creaturePrefab, _parentTransform);
+            newCreature.GetComponent<MapCreature>().SpawnCreature(GetRandomPointAroundPlayer(), _possibleSpawnableCreatures[random]);
 
             // Drehen der Creature, damit sie nach unten schauen
             newCreature.transform.rotation = Quaternion.Euler(0, 180, 0);

@@ -11,10 +11,19 @@ public class MapCreature : MonoBehaviour, IPointerClickHandler
 
     [SerializeField] GameObject _inRangeVisuals;
     [SerializeField] float _catchingRange;
+
+    [SerializeField] Transform _visualRoot;
+
+    ScriptableCreature _scriptableCreature;
+
     bool isInCatchingRange;
 
-    public void SpawnCreature(Vector2 coordinates)
+    public void SpawnCreature(Vector2 coordinates, ScriptableCreature scriptableCreatureToSpawn)
     {
+        _scriptableCreature = scriptableCreatureToSpawn;
+
+        GameObject creatureVisuals = Instantiate (_scriptableCreature.Model, _visualRoot);
+
         _cesiumGlobeAnchor.longitudeLatitudeHeight = new double3(coordinates.y, coordinates.x, 0);
         _cesiumGlobeAnchor.Sync();
 
@@ -56,6 +65,8 @@ public class MapCreature : MonoBehaviour, IPointerClickHandler
         if(!isInCatchingRange)
             return;
 
+
+        GameplayManager.Instance.SetSelectedCreature (_scriptableCreature);
         SceneManager.LoadScene("CreatureCatch");
     }
 }
