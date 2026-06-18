@@ -18,11 +18,13 @@ public class MapCreature : MonoBehaviour, IPointerClickHandler
 
     bool isInCatchingRange;
 
+    public bool IsInCatchingRange => isInCatchingRange;
+
     public void SpawnCreature(Vector2 coordinates, ScriptableCreature scriptableCreatureToSpawn)
     {
         _scriptableCreature = scriptableCreatureToSpawn;
 
-        GameObject creatureVisuals = Instantiate (_scriptableCreature.Model, _visualRoot);
+        GameObject creatureVisuals = Instantiate(_scriptableCreature.Model, _visualRoot);
 
         _cesiumGlobeAnchor.longitudeLatitudeHeight = new double3(coordinates.y, coordinates.x, 0);
         _cesiumGlobeAnchor.Sync();
@@ -30,12 +32,10 @@ public class MapCreature : MonoBehaviour, IPointerClickHandler
         _heightAdjuster.AdjustHeight();
     }
 
-
     void Update()
     {
         CalculateDistanceToPlayer();
     }
-
 
     void CalculateDistanceToPlayer()
     {
@@ -44,15 +44,14 @@ public class MapCreature : MonoBehaviour, IPointerClickHandler
 
         if (dist <= _catchingRange)
         {
-            isInCatchingRange=true;
+            isInCatchingRange = true;
             SetCatchingVisualsActive(true);
         }
         else
         {
-            isInCatchingRange=false;
+            isInCatchingRange = false;
             SetCatchingVisualsActive(false);
         }
-
     }
 
     void SetCatchingVisualsActive(bool value)
@@ -62,11 +61,10 @@ public class MapCreature : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if(!isInCatchingRange)
+        if (!isInCatchingRange)
             return;
 
-
-        GameplayManager.Instance.SetSelectedCreature (_scriptableCreature);
+        GameplayManager.Instance.SetSelectedCreature(_scriptableCreature);
         SceneManager.LoadScene("CreatureCatch");
     }
 }

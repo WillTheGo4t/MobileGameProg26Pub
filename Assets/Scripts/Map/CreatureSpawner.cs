@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class CreatureSpawner : MonoBehaviour
 {
-
     float _metersPerDegreeLong;
     const float _metersPerDegreeLat = 111320f; // 111.320m = 111,32km 
     [SerializeField] GPSLocation _gpsLocation;
@@ -16,29 +15,55 @@ public class CreatureSpawner : MonoBehaviour
 
     [SerializeField] List<ScriptableCreature> _possibleSpawnableCreatures;
 
-
+    private List<MapCreature> _spawnedCreatures = new List<MapCreature>();
 
     void Start()
     {
-        Invoke("InitialSpawns", 3f);
+        InvokeRepeating("RefreshSpawns", 3f, 30f);
     }
 
-
-    void InitialSpawns()
+    public void ForceRefresh()
     {
-        for (int i = 0; i < _numberOfSpawns; i++)
+        RefreshSpawns();
+    }
+
+    void RefreshSpawns()
+    {
+        for (int i = _spawnedCreatures.Count - 1; i >= 0; i--)
+        {
+            if (_spawnedCreatures[i] == null)
+            {
+                _spawnedCreatures.RemoveAt(i);
+                continue;
+            }
+
+            if (!_spawnedCreatures[i].IsInCatchingRange)
+            {
+                Destroy(_spawnedCreatures[i].gameObject);
+                _spawnedCreatures.RemoveAt(i);
+            }
+        }
+
+        int creaturesToSpawn = (int)_numberOfSpawns - _spawnedCreatures.Count;
+
+        for (int i = 0; i < creaturesToSpawn; i++)
         {
             // MapCreature SpawnCreature aufrufen mit Position an der gespawnt werden soll und 
             // einem zufälligen CreatureType das gespawnt werden soll
 
             int random = Random.Range(0, _possibleSpawnableCreatures.Count);
             GameObject newCreature = Instantiate(_creaturePrefab, _parentTransform);
-            newCreature.GetComponent<MapCreature>().SpawnCreature(GetRandomPointAroundPlayer(), _possibleSpawnableCreatures[random]);
+
+            MapCreature mapCreature = newCreature.GetComponent<MapCreature>();
+            mapCreature.SpawnCreature(GetRandomPointAroundPlayer(), _possibleSpawnableCreatures[random]);
 
             // Drehen der Creature, damit sie nach unten schauen
             newCreature.transform.rotation = Quaternion.Euler(0, 180, 0);
+
+            _spawnedCreatures.Add(mapCreature);
         }
     }
+
     Vector2 GetRandomPointAroundPlayer()
     {
         // Zufälliger Punkt im Kreis
@@ -49,11 +74,10 @@ public class CreatureSpawner : MonoBehaviour
         * Mathf.Cos(_gpsLocation.GetPlayerCoordinates().x
         * Mathf.Deg2Rad);
 
-        // Umrechnung Meter → GPS °
+        // Umrechnung Meter -> GPS °
         var lat = _gpsLocation.GetPlayerCoordinates().x + (random.y / _metersPerDegreeLat);
         var lon = _gpsLocation.GetPlayerCoordinates().y + (random.x / _metersPerDegreeLong);
 
         return new Vector2(lat, lon);
     }
-
 }

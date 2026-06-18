@@ -11,10 +11,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/6-AR/CreatureCatch.unity
     guid: 3b5b50d128f943743aa6e70b1a532dd8
-  - enabled: 0
+  - enabled: 1
     path: Assets/2-UI/Scenes/CreatureViewer.unity
     guid: f27fc228b8816da46b5549dd7a14ba9e
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/4-GPS/GPS.unity
     guid: 5927bcdccec1bd0418c967012d5d29e5
   m_configObjects:

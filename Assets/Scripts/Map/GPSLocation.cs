@@ -7,10 +7,8 @@ using UnityEngine;
 using UnityEngine.Android;
 using UnityEngine.UI;
 
-
 public class GPSLocation : MonoBehaviour
 {
-
     public enum TrackingMode
     {
         Idle,
@@ -22,12 +20,15 @@ public class GPSLocation : MonoBehaviour
 
     [SerializeField] CesiumGeoreference _cesiumGeoReference;
 
-
     [SerializeField] TextMeshProUGUI _coordinatesTextField;
     [SerializeField] TextMeshProUGUI _trackingModeTextField;
 
+    [Header("Dev Mode Controls")]
+    [SerializeField] GameObject _devMovementControlGroup;
     [SerializeField] Image _walkNorthButtonImage;
     [SerializeField] Image _walkEastButtonImage;
+    [SerializeField] Image _walkSouthButtonImage;
+    [SerializeField] Image _walkWestButtonImage;
 
     [SerializeField] bool _useMockService;
 
@@ -35,12 +36,14 @@ public class GPSLocation : MonoBehaviour
     [SerializeField] HeightAdjuster _playerHeightAdjuster;
 
     [SerializeField] float _mockHeading = 0;
+    [SerializeField] float steps = 1f;
 
     [SerializeField] PlayerAvatar _playerAvatar;
 
     bool _walkNorth;
     bool _walkEast;
-
+    bool _walkSouth;
+    bool _walkWest;
 
     public class PlayerPosition
     {
@@ -50,30 +53,26 @@ public class GPSLocation : MonoBehaviour
     }
 
     PlayerPosition _playerPosition;
-
     PlayerPosition _mockPosition;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         _playerPosition = new PlayerPosition();
         _mockPosition = new PlayerPosition();
         Input.compass.enabled = true;
-        
+
         SetMockPosition1();
 
-        // _mockPosition.latitude = 49.4135f;
-        // _mockPosition.longitude = 8.615133f;
-        // _mockPosition.altitude = 200f;
+        if (_devMovementControlGroup != null)
+        {
+            _devMovementControlGroup.SetActive(_useMockService);
+        }
 
         if (_useMockService)
             InvokeRepeating("UpdatePlayerPosition", 1f, 1f);
         else
             StartCoroutine("StartLocationService");
-
-
     }
-
 
     IEnumerator StartLocationService()
     {
@@ -114,16 +113,33 @@ public class GPSLocation : MonoBehaviour
         {
             Debug.Log("Location initialization failed");
         }
-
     }
 
+    public void ToggleDevMode()
+    {
+        _useMockService = !_useMockService;
+
+        if (_devMovementControlGroup != null)
+        {
+            _devMovementControlGroup.SetActive(_useMockService);
+        }
+
+        if (_useMockService)
+        {
+            Input.location.Stop();
+        }
+        else
+        {
+            StartCoroutine(StartLocationService());
+        }
+
+        FindAnyObjectByType<CreatureSpawner>().ForceRefresh();
+    }
 
     public void ToggleTrackMode()
     {
-        //get current TrackingMode
         TrackingMode newTrackMode = _currentTrackingMode;
 
-        //if we are in last tracking mode -> go to first, else just increase 
         if (_currentTrackingMode == TrackingMode.Encounter)
             newTrackMode = TrackingMode.Idle;
         else
@@ -142,18 +158,15 @@ public class GPSLocation : MonoBehaviour
             case TrackingMode.Idle:
                 Input.location.Start(100f, 50f);
                 break;
-
             case TrackingMode.Walking:
                 Input.location.Start(10f, 10f);
                 break;
-
             case TrackingMode.Encounter:
                 Input.location.Start(5f, 2f);
                 break;
         }
         _trackingModeTextField.text = "Trackmode " + trackingMode.ToString();
     }
-
 
     public void SetMockPosition1()
     {
@@ -169,27 +182,29 @@ public class GPSLocation : MonoBehaviour
         _mockPosition.altitude = 143f;
     }
 
-
     public void ToggleWalkNorth()
     {
         _walkNorth = !_walkNorth;
-
-        if (_walkNorth)
-            _walkNorthButtonImage.color = Color.green;
-        else
-            _walkNorthButtonImage.color = Color.white;
+        if (_walkNorthButtonImage != null) _walkNorthButtonImage.color = _walkNorth ? Color.green : Color.white;
     }
 
     public void ToggleWalkEast()
     {
         _walkEast = !_walkEast;
-
-        if (_walkEast)
-            _walkEastButtonImage.color = Color.green;
-        else
-            _walkEastButtonImage.color = Color.white;
+        if (_walkEastButtonImage != null) _walkEastButtonImage.color = _walkEast ? Color.green : Color.white;
     }
 
+    public void ToggleWalkSouth()
+    {
+        _walkSouth = !_walkSouth;
+        if (_walkSouthButtonImage != null) _walkSouthButtonImage.color = _walkSouth ? Color.green : Color.white;
+    }
+
+    public void ToggleWalkWest()
+    {
+        _walkWest = !_walkWest;
+        if (_walkWestButtonImage != null) _walkWestButtonImage.color = _walkWest ? Color.green : Color.white;
+    }
 
     void UpdatePlayerPosition()
     {
@@ -203,7 +218,6 @@ public class GPSLocation : MonoBehaviour
         _cesiumGeoReference.SetOriginLongitudeLatitudeHeight(_playerPosition.longitude,
         _playerPosition.latitude, _playerPosition.altitude);
 
-
         UpdateHeading();
 
         _cameraHeightAdjuster.AdjustHeight();
@@ -212,10 +226,12 @@ public class GPSLocation : MonoBehaviour
 
     void GetPlayerPositionFromMock()
     {
-        if (_walkNorth)
-            _mockPosition.latitude += 2 / 111320f;
-        if (_walkEast)
-            _mockPosition.longitude += 2 / 111320f * 20f;
+        float stepSize = steps / 111320f;
+
+        if (_walkNorth) _mockPosition.latitude += stepSize;
+        if (_walkSouth) _mockPosition.latitude -= stepSize;
+        if (_walkEast) _mockPosition.longitude += stepSize;
+        if (_walkWest) _mockPosition.longitude -= stepSize;
 
         _playerPosition.latitude = _mockPosition.latitude;
         _playerPosition.longitude = _mockPosition.longitude;
@@ -233,7 +249,7 @@ public class GPSLocation : MonoBehaviour
 
     public Vector2 GetPlayerCoordinates()
     {
-        return new Vector2(_playerPosition.latitude, _playerPosition.longitude); 
+        return new Vector2(_playerPosition.latitude, _playerPosition.longitude);
     }
 
     void UpdateHeading()
@@ -242,7 +258,7 @@ public class GPSLocation : MonoBehaviour
         if (_useMockService)
             heading = _mockHeading;
         else
-            heading = Input.compass.trueHeading; // 0° = Nord, 90° = Ost
+            heading = Input.compass.trueHeading;
 
         _playerAvatar.SetLookDirection(heading);
     }
