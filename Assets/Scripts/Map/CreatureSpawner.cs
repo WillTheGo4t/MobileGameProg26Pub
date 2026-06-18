@@ -4,18 +4,24 @@ using UnityEngine;
 public class CreatureSpawner : MonoBehaviour
 {
     float _metersPerDegreeLong;
-    const float _metersPerDegreeLat = 111320f; // 111.320m = 111,32km 
+    const float _metersPerDegreeLat = 111320f;
     [SerializeField] GPSLocation _gpsLocation;
-    [SerializeField] GameObject _creaturePrefab;
-    // in Unity Units = Meter
-    [SerializeField] float _radius;
-    // GameObject that is Child of CesiumGeoReference so we spawn the Creatures correctly.
-    [SerializeField] Transform _parentTransform;
-    [SerializeField] float _numberOfSpawns = 5;
 
+    [Header("Creatures")]
+    [SerializeField] GameObject _creaturePrefab;
+    [SerializeField] float _numberOfSpawns = 5;
     [SerializeField] List<ScriptableCreature> _possibleSpawnableCreatures;
 
+    [Header("Fruits")]
+    [SerializeField] GameObject _fruitPrefab;
+    [SerializeField] int _maxFruits = 5;
+
+    [Header("General Settings")]
+    [SerializeField] float _radius;
+    [SerializeField] Transform _parentTransform;
+
     private List<MapCreature> _spawnedCreatures = new List<MapCreature>();
+    private List<MapFruit> _spawnedFruits = new List<MapFruit>();
 
     void Start()
     {
@@ -44,40 +50,54 @@ public class CreatureSpawner : MonoBehaviour
             }
         }
 
-        int creaturesToSpawn = (int)_numberOfSpawns - _spawnedCreatures.Count;
+        for (int i = _spawnedFruits.Count - 1; i >= 0; i--)
+        {
+            if (_spawnedFruits[i] == null)
+            {
+                _spawnedFruits.RemoveAt(i);
+                continue;
+            }
 
+            if (!_spawnedFruits[i].IsInCatchingRange)
+            {
+                Destroy(_spawnedFruits[i].gameObject);
+                _spawnedFruits.RemoveAt(i);
+            }
+        }
+
+        // 3. Neue Kreaturen spawnen
+        int creaturesToSpawn = (int)_numberOfSpawns - _spawnedCreatures.Count;
         for (int i = 0; i < creaturesToSpawn; i++)
         {
-            // MapCreature SpawnCreature aufrufen mit Position an der gespawnt werden soll und 
-            // einem zufälligen CreatureType das gespawnt werden soll
-
             int random = Random.Range(0, _possibleSpawnableCreatures.Count);
             GameObject newCreature = Instantiate(_creaturePrefab, _parentTransform);
 
             MapCreature mapCreature = newCreature.GetComponent<MapCreature>();
             mapCreature.SpawnCreature(GetRandomPointAroundPlayer(), _possibleSpawnableCreatures[random]);
 
-            // Drehen der Creature, damit sie nach unten schauen
             newCreature.transform.rotation = Quaternion.Euler(0, 180, 0);
-
             _spawnedCreatures.Add(mapCreature);
+        }
+
+        // 4. Neue Früchte spawnen
+        int fruitsToSpawn = _maxFruits - _spawnedFruits.Count;
+        for (int i = 0; i < fruitsToSpawn; i++)
+        {
+            GameObject newFruit = Instantiate(_fruitPrefab, _parentTransform);
+
+            MapFruit mapFruit = newFruit.GetComponent<MapFruit>();
+            mapFruit.SpawnFruit(GetRandomPointAroundPlayer());
+
+            _spawnedFruits.Add(mapFruit);
         }
     }
 
     Vector2 GetRandomPointAroundPlayer()
     {
-        // Zufälliger Punkt im Kreis
         Vector2 random = Random.insideUnitCircle * _radius;
-
-        // Umberechnung der MeterProGrad Longitude, alternativ auch einfach 111320f nehmen
-        _metersPerDegreeLong = 111320f
-        * Mathf.Cos(_gpsLocation.GetPlayerCoordinates().x
-        * Mathf.Deg2Rad);
-
-        // Umrechnung Meter -> GPS °
+        _metersPerDegreeLong = 111320f * Mathf.Cos(_gpsLocation.GetPlayerCoordinates().x * Mathf.Deg2Rad);
         var lat = _gpsLocation.GetPlayerCoordinates().x + (random.y / _metersPerDegreeLat);
         var lon = _gpsLocation.GetPlayerCoordinates().y + (random.x / _metersPerDegreeLong);
-
         return new Vector2(lat, lon);
     }
 }

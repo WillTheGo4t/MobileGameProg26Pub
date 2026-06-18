@@ -130,11 +130,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1717389715574553207}
-  - component: {fileID: 3026561586442699617}
   - component: {fileID: 7057609560363484383}
   - component: {fileID: 7799984998715378133}
+  - component: {fileID: -2073206800536651929}
   m_Layer: 0
-  m_Name: MapCreature
+  m_Name: MapFruit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -158,23 +158,6 @@ Transform:
   - {fileID: 903086552641287145}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3026561586442699617
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8666068513098319093}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6f0792a81283d240b611eb9329eb3aa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MapCreature
-  _heightAdjuster: {fileID: 7799984998715378133}
-  _cesiumGlobeAnchor: {fileID: 7057609560363484383}
-  _inRangeVisuals: {fileID: 2598207055663486223}
-  _catchingRange: 7
-  _visualRoot: {fileID: 698416932675471892}
 --- !u!114 &7057609560363484383
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -224,6 +207,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HeightAdjuster
   _cameraOffset: 0
+--- !u!114 &-2073206800536651929
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8666068513098319093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6aaba3d4917660843ac87c9a2bd67786, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapFruit
+  _heightAdjuster: {fileID: 7799984998715378133}
+  _cesiumGlobeAnchor: {fileID: 7057609560363484383}
+  _inRangeVisuals: {fileID: 2598207055663486223}
+  _catchingRange: 5
+  _visualRoot: {fileID: 698416932675471892}
+  _fruitModelPrefab: {fileID: 919132149155446097, guid: 1a1876f7784328e489ec50fca1f3f000, type: 3}
 --- !u!1 &8972210641305176895
 GameObject:
   m_ObjectHideFlags: 0

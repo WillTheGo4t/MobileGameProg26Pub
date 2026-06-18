@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,8 +7,10 @@ public class GameplayManager : MonoBehaviour
     public static GameplayManager Instance { get; private set; }
 
     public ScriptableCreature SelectedCreature { get; private set; }
-
     public List<CreatureData> CaughtCreatures = new List<CreatureData>();
+    public int FruitCount { get; private set; }
+
+    public event Action<int> OnFruitCountChanged;
 
     void Awake()
     {
@@ -33,5 +36,20 @@ public class GameplayManager : MonoBehaviour
         SelectedCreature = null;
     }
 
+    public void AddFruit(int amount)
+    {
+        FruitCount += amount;
+        OnFruitCountChanged?.Invoke(FruitCount);
+    }
 
+    public bool TryUseFruit()
+    {
+        if (FruitCount > 0)
+        {
+            FruitCount--;
+            OnFruitCountChanged?.Invoke(FruitCount);
+            return true;
+        }
+        return false;
+    }
 }

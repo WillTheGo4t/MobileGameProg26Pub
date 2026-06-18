@@ -7,65 +7,131 @@ public class ARCreature : MonoBehaviour
 {
     bool isMoving;
     Transform targetBait;
+
     [SerializeField] float stopDistance = 0.1f;
     [SerializeField] float speed = 10f;
+    [SerializeField] float maxChaseDistance = 0.3f;
+
+    public float minCageDistance = 1.0f;
 
     [SerializeField] Transform _visualRoot;
-    
-    ScriptableCreature _scriptableCreature;
+    [SerializeField] LineRenderer _chaseCircleRenderer;
+    [SerializeField] LineRenderer _cageCircleRenderer;
 
+    ScriptableCreature _scriptableCreature;
 
     void OnDisable()
     {
-        // Unbedingt immer desubscriben, um Memory Leaks zu verhindern!
         ARBaitSpawner.OnBaitPlaced -= HandleNewBait;
     }
 
     void OnEnable()
     {
-        // Auf das statische Event vom BaitSpawner subscriben
         ARBaitSpawner.OnBaitPlaced += HandleNewBait;
     }
-
 
     public void SetCreatureType(ScriptableCreature scriptableCreature)
     {
         _scriptableCreature = scriptableCreature;
-        GameObject creatureVisuals = Instantiate(scriptableCreature.Model, _visualRoot);        
+        Instantiate(scriptableCreature.Model, _visualRoot);
+
+        DrawCircles();
     }
 
+    void DrawCircles()
+    {
+        if (_chaseCircleRenderer != null)
+        {
+            SetupLineRenderer(_chaseCircleRenderer, maxChaseDistance, Color.red);
+        }
+
+        if (_cageCircleRenderer != null)
+        {
+            SetupLineRenderer(_cageCircleRenderer, minCageDistance, Color.green);
+        }
+    }
+
+    void SetupLineRenderer(LineRenderer lr, float radius, Color color)
+    {
+        int segments = 50;
+        lr.positionCount = segments + 1;
+        lr.useWorldSpace = false;
+        lr.startWidth = 0.02f;
+        lr.endWidth = 0.02f;
+
+        lr.material = new Material(Shader.Find("Sprites/Default"));
+        lr.startColor = color;
+        lr.endColor = color;
+
+        float angle = 0f;
+        for (int i = 0; i < (segments + 1); i++)
+        {
+            float x = Mathf.Sin(Mathf.Deg2Rad * angle) * radius;
+            float z = Mathf.Cos(Mathf.Deg2Rad * angle) * radius;
+
+            lr.SetPosition(i, new Vector3(x, 0.01f, z));
+            angle += (360f / segments);
+        }
+    }
 
     private void HandleNewBait(Transform baitTransform)
     {
-        targetBait = baitTransform;
-        isMoving = true;
+        FindClosestBait();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        // Wenn wir kein Ziel haben oder nicht laufen sollen, tun wir nichts
         if (!isMoving || targetBait == null) return;
 
-        // 1. Blickrichtung zum Köder drehen (sieht natürlicher aus)
         Vector3 targetPosition = new Vector3(targetBait.position.x,
         transform.position.y,
         targetBait.position.z);
 
         transform.LookAt(targetPosition);
-
-        // 2. Auf den Köder zubewegen
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
 
-        // 3. Distanz prüfen: Sind wir nah genug dran?
         if (Vector3.Distance(transform.position, targetPosition) <= stopDistance)
         {
-            //CatchLogic();
-           CatchCreature();
+            isMoving = false;
+
+            if (targetBait != null)
+            {
+                targetBait.tag = "Untagged";
+                Destroy(targetBait.gameObject);
+                targetBait = null;
+            }
+
+            FindClosestBait();
         }
     }
 
-    void CatchCreature()
+    void FindClosestBait()
+    {
+        GameObject[] allBaits = GameObject.FindGameObjectsWithTag("Bait");
+        float closestDistance = maxChaseDistance;
+        Transform bestBait = null;
+
+        foreach (GameObject bait in allBaits)
+        {
+            if (bait == null) continue;
+
+            float distanceToBait = Vector3.Distance(transform.position, bait.transform.position);
+
+            if (distanceToBait <= closestDistance)
+            {
+                closestDistance = distanceToBait;
+                bestBait = bait.transform;
+            }
+        }
+
+        if (bestBait != null)
+        {
+            targetBait = bestBait;
+            isMoving = true;
+        }
+    }
+
+    public void CatchCreature()
     {
         isMoving = false;
 
@@ -76,14 +142,11 @@ public class ARCreature : MonoBehaviour
 
         GameplayManager.Instance.AddCaughtCreature(caughtCreature);
 
-        Invoke("LoadMapScene",1f);
+        Invoke("LoadMapScene", 1f);
     }
 
     void LoadMapScene()
     {
         SceneManager.LoadScene("MapScene");
     }
-
-
-
 }

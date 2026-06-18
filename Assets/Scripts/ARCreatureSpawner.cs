@@ -74,10 +74,16 @@ public class ARCreatureSpawner : MonoBehaviour
 
     void DisablePlaneVisuals()
     {
-        _arPlaneManager.enabled = false;
         foreach (var plane in _arPlaneManager.trackables)
         {
-            plane.gameObject.SetActive(false);
+
+            var meshRenderer = plane.GetComponent<MeshRenderer>();
+            if (meshRenderer != null)
+                meshRenderer.enabled = false;
+
+            var lineRenderer = plane.GetComponent<LineRenderer>();
+            if (lineRenderer != null)
+                lineRenderer.enabled = false;
         }
     }
 
